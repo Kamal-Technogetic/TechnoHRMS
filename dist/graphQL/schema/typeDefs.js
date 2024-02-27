@@ -1,6 +1,8 @@
+"use strict";
 // import { gql } from "@apollo/server";
-
-export const typeDefs = `
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.typeDefs = void 0;
+exports.typeDefs = `
   scalar BirthDate
   scalar JoinDate
   scalar DateTime
@@ -12,7 +14,19 @@ export const typeDefs = `
     contactNumber: String!
     jobTitle: String!
     department: String!
-    dateOfJoining: String!
+    dateOfJoining: String
+    shift:String
+  }
+
+  input RegisterHRLogin {
+    name: String!
+    email: String!
+    password: String!
+    contactNumber: String!
+    jobTitle: String
+    department: String
+    dateOfJoining: String
+    shift: String
   }
 
   input LoginInput {
@@ -30,6 +44,29 @@ export const typeDefs = `
     relationWithEmergencyNumber: String
   }
 
+  input updateAttendenceInput{
+    userId: ID!
+  }
+
+  input generalLeaveInput{
+    shortLeave:String
+    totalLeaveBalance:String
+    sickLeaveBalance:String
+    personalLeaveBalance:String
+    otherLeaveBalance:String
+  }
+
+  type AllEmployee{
+    id: ID!
+    name: String!
+    email: String!
+    password: String!
+    contactNumber: String!
+    jobTitle: String!
+    department: String!
+    dateOfJoining: String!
+  }
+
   type EmpDetails {
     id: ID!
     name: String!
@@ -39,7 +76,28 @@ export const typeDefs = `
     jobTitle: String!
     department: String!
     dateOfJoining: String!
+    shift:String!
     token: String!
+  }
+
+  type Attendance {
+    timeIn: DateTime
+    timeOut: DateTime
+    shiftDuration: String
+    present: Boolean
+    note: String
+  }
+
+  type AttendanceEmpDetails {
+    id: ID
+    name: String
+    email: String
+    message:String!
+    attendance:[Attendance]
+  }
+  
+  type SetLeavesDetails{
+    message:String!
   }
 
   type EmpAllDetails {
@@ -124,13 +182,23 @@ export const typeDefs = `
   }
 
   type Query {
-    getEmpDetails: [EmpDetails]
+    getEmpDetails: [AllEmployee]
     default: String!
   }
 
   type Mutation {
     registerEmployee(input: RegisterEmployeeLogin): EmpDetails!
+    registerHR(input:RegisterHRLogin):EmpDetails!
+
     loginEmployee(input: LoginInput): EmpDetails!
-    updateEmpDetails(input: updateEmpDetailsInput): EmpAllDetails
+
+    AttendanceLogin(input:updateAttendenceInput): AttendanceEmpDetails!
+    AttendanceLogout(input:updateAttendenceInput): AttendanceEmpDetails!
+
+    setLeavesGeneralApi(input: generalLeaveInput): SetLeavesDetails!
+    
+    
+
+    upadteEmpDetails(input: updateEmpDetailsInput): EmpAllDetails
   }
 `;

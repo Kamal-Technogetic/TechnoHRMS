@@ -1,4 +1,5 @@
 import validator from "validator";
+import moment from "moment";
 
 interface RegisterInput {
   name: string;
@@ -7,7 +8,15 @@ interface RegisterInput {
   contactNumber: string;
   jobTitle: string;
   department: string;
-  dateOfJoining: string;
+  dateOfJoining?: string;
+  shift?: string;
+}
+
+interface HRRegisterInput {
+  name: string;
+  email: string;
+  password: string;
+  contactNumber: string;
 }
 
 interface LoginInput {
@@ -25,7 +34,7 @@ interface UpdateInput {
   relationWithEmergencyNumber: string;
 }
 
-const validateRegisterInput = ({
+export const validateRegisterInput = ({
   name,
   email,
   password,
@@ -33,6 +42,7 @@ const validateRegisterInput = ({
   jobTitle,
   department,
   dateOfJoining,
+  shift,
 }: RegisterInput) => {
   const errors: Record<string, string> = {};
 
@@ -60,6 +70,10 @@ const validateRegisterInput = ({
     errors.contactNumber = "Invalid contact number";
   }
 
+  if (!/^\d+$/.test(contactNumber)) {
+    errors.contactNumber = "Invalid contact number";
+  }
+
   if (jobTitle.trim() === "") {
     errors.jobTitle = "Job title must not be empty";
   }
@@ -68,6 +82,7 @@ const validateRegisterInput = ({
     errors.department = "Department must not be empty";
   }
 
+  dateOfJoining = dateOfJoining ?? moment().format("YYYY-MM-DD");
   if (!validator.isISO8601(dateOfJoining, { strict: true })) {
     errors.dateOfJoining = "Invalid date format for date of joining";
   }
@@ -75,7 +90,46 @@ const validateRegisterInput = ({
   return { errors, valid: Object.keys(errors).length < 1 };
 };
 
-const validateLoginInput = ({ email, password }: LoginInput) => {
+export const validateHRRegInput = ({
+  name,
+  email,
+  password,
+  contactNumber,
+}: HRRegisterInput) => {
+  const errors: Record<string, string> = {};
+
+  if (name.trim() === "") {
+    errors.username = "UserNmame not be empty";
+  }
+
+  if (email.trim() === "") {
+    errors.email = "email not be empty";
+  } else {
+    if (!validator.isEmail(email)) {
+      errors.email = "Email must be a valid address";
+    }
+  }
+
+  if (password.trim() === "") {
+    errors.password = "Password must not be Empty";
+  }
+
+  if (contactNumber.trim() === "") {
+    errors.contactNumber = "Contact number must not be empty";
+  } else if (
+    !validator.isMobilePhone(contactNumber, "any", { strictMode: false })
+  ) {
+    errors.contactNumber = "Invalid contact number";
+  }
+
+  if (!/^\d+$/.test(contactNumber)) {
+    errors.contactNumber = "Invalid contact number";
+  }
+
+  return { errors, valid: Object.keys(errors).length < 1 };
+};
+
+export const validateLoginInput = ({ email, password }: LoginInput) => {
   const errors: Record<string, string> = {};
 
   if (email === "") {
@@ -128,4 +182,4 @@ const validateUpateInput = ({
   return { errors, valid: Object.keys(errors).length < 1 };
 };
 
-export { validateRegisterInput, validateLoginInput };
+// export { validateRegisterInput, validateLoginInput };
