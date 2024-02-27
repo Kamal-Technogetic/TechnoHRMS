@@ -15,7 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const server_1 = require("@apollo/server");
 const standalone_1 = require("@apollo/server/standalone");
 const index_1 = require("./graphQL/resolvers/index");
-const typeDefs_1 = require("./graphQL/schema/typeDefs");
+const typeDefs_1 = require("./graphQL/typeDefs");
 const mongoose_1 = __importDefault(require("mongoose"));
 const dotenv_1 = __importDefault(require("dotenv"));
 dotenv_1.default.config();

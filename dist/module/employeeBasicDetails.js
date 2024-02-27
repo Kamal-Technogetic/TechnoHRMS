@@ -2,12 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const mongoose_1 = require("mongoose");
 const uuid_1 = require("uuid");
-var Gender;
-(function (Gender) {
-    Gender["Male"] = "male";
-    Gender["Female"] = "female";
-    Gender["Other"] = "other";
-})(Gender || (Gender = {}));
 // Function to generate employee ID
 function generateEmployeeId() {
     const uuid = (0, uuid_1.v4)();
@@ -28,7 +22,10 @@ const employeeBasicDetailsSchema = new mongoose_1.Schema({
     email: String,
     token: String,
     dateOfBirth: String,
-    dateOfJoining: Date,
+    dateOfJoining: {
+        type: Date,
+        default: Date.now,
+    },
     location: {
         type: { type: String, enum: ["Point"], default: "Point" },
         coordinates: [String, String],
@@ -36,7 +33,6 @@ const employeeBasicDetailsSchema = new mongoose_1.Schema({
         longitude: { type: [Number], required: true },
     },
     password: String,
-    shift: { type: String, default: "Day" },
     contactNumber: String,
     jobTitle: String,
     department: String,
@@ -50,32 +46,32 @@ const employeeBasicDetailsSchema = new mongoose_1.Schema({
     relationWithEmergencyNumber: String,
     attendance: [
         {
-            _id: String,
-            email: String,
-            timeIn: Date,
-            timeOut: Date,
+            timeIn: {
+                type: Date,
+                default: Date.now,
+            },
+            timeOut: {
+                type: Date,
+                default: Date.now,
+            },
+            shift: String,
             shiftDuration: String,
-            present: { type: Boolean, default: false },
-            note: String,
+            shiftStartTime: String,
+            shiftEndTime: String,
+            present: Boolean,
         },
     ],
-    shortLeave: String,
-    totalLeaveBalance: String,
-    sickLeaveBalance: String,
-    personalLeaveBalance: String,
-    otherLeaveBalance: String,
     leaves: [
         {
             leaveId: String,
-            leaveType: String,
             leaveApproval: String,
+            shortLeave: String,
             reasonForLeave: String,
+            totalLeaveBalance: String,
+            sickLeaveBalance: String,
+            personalLeaveBalance: String,
+            otherLeaveBalance: String,
             status: String,
-            startDate: Date,
-            endDate: Date,
-            managerApprovalRequired: Boolean,
-            comments: String,
-            statusHistory: [{ status: String, updatedBy: String, timestamp: Date }],
         },
     ],
     salary: [

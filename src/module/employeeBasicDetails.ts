@@ -1,35 +1,27 @@
 import { Schema, model, Document } from "mongoose";
 import { v4 as uuidv4 } from "uuid";
-import mongoose from "mongoose";
 
+// Define types for your schema
 export interface Attendance {
-  _id?: mongoose.Types.ObjectId;
-  email: string;
-  timeIn?: Date;
-  timeOut?: Date;
-  shiftDuration?: string;
-  present?: boolean;
-  note?: String;
-}
-
-enum Gender {
-  Male = "male",
-  Female = "female",
-  Other = "other",
+  timeIn: Date;
+  timeOut: Date;
+  shift: string;
+  shiftDuration: string;
+  shiftStartTime: string;
+  shiftEndTime: string;
+  present: boolean;
 }
 
 export interface Leave {
   leaveId: string;
-  leaveType: string;
   leaveApproval: string;
+  shortLeave: string;
   reasonForLeave: string;
   totalLeaveBalance: string;
+  sickLeaveBalance: string;
+  personalLeaveBalance: string;
+  otherLeaveBalance: string;
   status: string;
-  startDate: Date;
-  endDate: Date;
-  managerApprovalRequired: boolean;
-  comments: string;
-  statusHistory: { status: string; updatedBy: string; timestamp: Date }[];
 }
 
 export interface Salary {
@@ -89,24 +81,18 @@ export interface EmployeeDetailsDocument extends Document {
     longitude: number[];
   };
   password: string;
-  shift: String;
   contactNumber: string;
   jobTitle: string;
   department: string;
   performanceRatings: number;
   nationality: string;
-  gender: Gender;
+  gender: string;
   religion: string;
   photo: string;
   fatherName: string;
   emergencyNumber: string;
   relationWithEmergencyNumber: string;
   attendance: Attendance[];
-  shortLeave: string;
-  totalLeaveBalance: string;
-  sickLeaveBalance: string;
-  personalLeaveBalance: string;
-  otherLeaveBalance: string;
   leaves: Leave[];
   salary: Salary[];
   workStatus: string;
@@ -137,7 +123,10 @@ const employeeBasicDetailsSchema = new Schema<EmployeeDetailsDocument>(
     email: String,
     token: String,
     dateOfBirth: String,
-    dateOfJoining: Date,
+    dateOfJoining: {
+      type: Date,
+      default: Date.now,
+    },
     location: {
       type: { type: String, enum: ["Point"], default: "Point" },
       coordinates: [String, String],
@@ -145,7 +134,6 @@ const employeeBasicDetailsSchema = new Schema<EmployeeDetailsDocument>(
       longitude: { type: [Number], required: true },
     },
     password: String,
-    shift: { type: String, default: "Day" },
     contactNumber: String,
     jobTitle: String,
     department: String,
@@ -159,32 +147,32 @@ const employeeBasicDetailsSchema = new Schema<EmployeeDetailsDocument>(
     relationWithEmergencyNumber: String,
     attendance: [
       {
-        _id: String,
-        email: String,
-        timeIn: Date,
-        timeOut: Date,
+        timeIn: {
+          type: Date,
+          default: Date.now,
+        },
+        timeOut: {
+          type: Date,
+          default: Date.now,
+        },
+        shift: String,
         shiftDuration: String,
-        present: { type: Boolean, default: false },
-        note: String,
+        shiftStartTime: String,
+        shiftEndTime: String,
+        present: Boolean,
       },
     ],
-    shortLeave: String,
-    totalLeaveBalance: String,
-    sickLeaveBalance: String,
-    personalLeaveBalance: String,
-    otherLeaveBalance: String,
     leaves: [
       {
         leaveId: String,
-        leaveType: String,
         leaveApproval: String,
+        shortLeave: String,
         reasonForLeave: String,
+        totalLeaveBalance: String,
+        sickLeaveBalance: String,
+        personalLeaveBalance: String,
+        otherLeaveBalance: String,
         status: String,
-        startDate: Date,
-        endDate: Date,
-        managerApprovalRequired: Boolean,
-        comments: String,
-        statusHistory: [{ status: String, updatedBy: String, timestamp: Date }],
       },
     ],
     salary: [
